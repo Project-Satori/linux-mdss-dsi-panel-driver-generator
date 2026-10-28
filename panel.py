@@ -87,7 +87,16 @@ class LaneMap(Enum):
 		if prop.is_str():  # Null terminated string
 			return LaneMap(prop.as_str())
 
-		print(f"WARNING: qcom,mdss-dsi-lane-map is not a null terminated string:", prop)
+		print(f"WARNING: qcom,mdss-dsi-lane-map is not a null terminated string:")
+
+		# Some panels have the lane-map mode as index for some reason
+		if len(prop) == 4:
+			i = prop.as_uint32()
+			lane_maps = list(LaneMap.__members__.values())
+			if i < len(lane_maps):
+				print(f"Interpreting qcom,mdss-dsi-lane-map as numeric index: {i} == {lane_maps[i]}")
+				return lane_maps[i]
+
 		return LaneMap.MAP_0123
 
 
